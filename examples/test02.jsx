@@ -38,7 +38,17 @@ var onPage = {
     tf.on('fitFrame', onFrame.whenFitFrame);
 
     tf.contents = num;
-    tf.emit('textInsert').emit('resizeFont').emit('fitFrame');
+
+    function _recur(context,order){
+      var ev = order.shift();
+      if(ev!==undefined){
+        context.emit(ev);
+        _recur(context,order)
+      }
+      return context
+    };
+
+    _recur(tf,opt.textFrame);
   }
 };
 
@@ -51,4 +61,6 @@ pages = new InddEmitter(pages);
 pages.on('addPage', onPage.whenAdd);
 
 var page = pages[0];
-pages.emit('addPage', page, {textFrame: ['textInsert','resizeFont','fitFrame']});
+pages.emit('addPage', page, {
+  textFrame: ['textInsert','resizeFont','fitFrame']
+});
